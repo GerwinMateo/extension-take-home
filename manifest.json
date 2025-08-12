@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Altera Action Recorder",
+  "version": "1.0",
+  "description": "Record and replay user actions on web pages",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "Action Recorder"
+  },
+  "side_panel": {
+    "default_path": "static/html/sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["static/js/content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "static/js/background.js"
+  }
+} 

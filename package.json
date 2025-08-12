@@ -1,0 +1,35 @@
+{
+  "name": "altera-action-recorder",
+  "version": "1.0.0",
+  "description": "Chrome extension for recording and replaying user actions",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && npm run build-js",
+    "build-js": "webpack --mode=production",
+    "dev": "webpack --mode=development --watch",
+    "clean": "rimraf dist",
+    "package": "npm run build && cd dist && zip -r ../altera-action-recorder.zip .",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "chrome-extension",
+    "action-recorder",
+    "selenium",
+    "automation"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
+    "babel-loader": "^9.1.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "copyfiles": "^2.4.1",
+    "css-loader": "^6.8.1",
+    "rimraf": "^5.0.1",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {}
+} 
