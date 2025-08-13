@@ -5,6 +5,26 @@ let startTime = null;
 function generateSelector(element) {
   if (element.id) return `#${element.id}`;
   
+  // Try data-testid first (common in modern apps)
+  if (element.getAttribute('data-testid')) {
+    return `[data-testid="${element.getAttribute('data-testid')}"]`;
+  }
+  
+  // Try aria-label (common for buttons)
+  if (element.getAttribute('aria-label')) {
+    return `${element.tagName.toLowerCase()}[aria-label="${element.getAttribute('aria-label')}"]`;
+  }
+  
+  // Try title attribute
+  if (element.getAttribute('title')) {
+    return `${element.tagName.toLowerCase()}[title="${element.getAttribute('title')}"]`;
+  }
+  
+  // Try role attribute
+  if (element.getAttribute('role')) {
+    return `${element.tagName.toLowerCase()}[role="${element.getAttribute('role')}"]`;
+  }
+  
   if (element.className) {
     const classes = element.className.split(' ').filter(c => c.trim());
     if (classes.length > 0) {
@@ -77,16 +97,31 @@ document.addEventListener('click', (e) => {
   const currentTime = Date.now();
   const timeSinceLastClick = currentTime - lastClickTime;
   
-  if (timeSinceLastClick > 100 || e.target !== lastClickTarget) {
+  // Get the actual clickable element (button, link, etc.)
+  let clickableElement = e.target;
+  while (clickableElement && clickableElement !== document.body) {
+    if (clickableElement.tagName === 'BUTTON' || 
+        clickableElement.tagName === 'A' || 
+        clickableElement.tagName === 'INPUT' ||
+        clickableElement.onclick ||
+        clickableElement.getAttribute('role') === 'button' ||
+        clickableElement.getAttribute('data-testid') ||
+        clickableElement.getAttribute('aria-label')) {
+      break;
+    }
+    clickableElement = clickableElement.parentElement;
+  }
+  
+  if (timeSinceLastClick > 100 || clickableElement !== lastClickTarget) {
     recordAction('click', {
-      selector: generateSelector(e.target),
+      selector: generateSelector(clickableElement),
       x: e.clientX,
       y: e.clientY,
-      text: e.target.textContent?.trim() || ''
+      text: clickableElement.textContent?.trim() || ''
     });
     
     lastClickTime = currentTime;
-    lastClickTarget = e.target;
+    lastClickTarget = clickableElement;
   }
 });
 
@@ -187,6 +222,12 @@ document.addEventListener('keydown', (e) => {
         });
       }
     }
+    
+    recordAction('keypress', {
+      selector: generateSelector(e.target),
+      key: 'Enter',
+      inputType: e.target.type || 'text'
+    });
     
     currentTypingAction = null;
     currentTypingElement = null;

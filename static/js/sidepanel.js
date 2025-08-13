@@ -192,6 +192,9 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'type':
         const value = action.value || '';
         return `Typed: "${value}"`;
+      case 'keypress':
+        const key = action.key || '';
+        return `Pressed key: ${key}`;
       default:
         return `Action: ${action.type}`;
     }
